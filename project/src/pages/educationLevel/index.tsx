@@ -132,7 +132,7 @@ export default function EducationLevel() {
   }, [isAlter]);
 
   return (
-    <>
+    <div className="container">
       <Breadcrumbs aria-label="breadcrumb">
         <Link underline="hover" color="inherit" href="/">
           Home
@@ -199,6 +199,6 @@ export default function EducationLevel() {
           <Button onClick={handleSubmit}>Criar</Button>
         </DialogActions>
       </Dialog>
-    </>
+    </div>
   );
 }

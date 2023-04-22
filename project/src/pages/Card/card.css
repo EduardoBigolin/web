@@ -1,22 +1,34 @@
+  html,
+  body,
+  #root {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    margin: 0
+  }
 
+  .container {
+    margin: 3rem
+  }
 
 .card-body {
   display: flex;
   margin: auto;
-  width: 900px;
-  height: 500px;
+  width: min(900px, 90vw);
+  height: min(500px, 90vh);
   background-color: #4c7a56;
-  -webkit-mask: radial-gradient(circle at left top, transparent 100px, black 101px),
-  radial-gradient(circle at right top, transparent 100px, black 101px),
-  radial-gradient(circle at left bottom, transparent 100px, black 101px),
-  radial-gradient(circle at right bottom, transparent 100px, black 101px),
+  -webkit-mask: radial-gradient(circle at left top, transparent 70px, black 71px),
+  radial-gradient(circle at right top, transparent 70px, black 71px),
+  radial-gradient(circle at left bottom, transparent 70px, black 71px),
+  radial-gradient(circle at right bottom, transparent 70px, black 71px),
   linear-gradient(black, black);
   -webkit-mask-composite: destination-in;
   mask-composite: exclude;
 }
 
 .qrCode-container {
-  height: 500px;
+  height: min(500px, 100%);
   width: 20px;
   align-items: center;
   display: flex;
@@ -34,6 +46,7 @@ h1,
 .birth-date,
 .student-name {
   color: #f7f7f7;
+  text-align: center;
 }
 
 .card-content {
@@ -94,7 +107,7 @@ h1,
 
 .authorized {
   display: flex;
-  width: 25rem;
+  width: min(25rem, 60%);
   height: 4rem;
   background-color: #214528;
   border-radius: 1rem;
@@ -105,7 +118,7 @@ h1,
 
 .not-authorized {
   display: flex;
-  width: 25rem;
+  width: min(25rem, 75%);
   height: 4rem;
   background-color: #BF0D3E;
   border-radius: 1rem;
@@ -120,14 +133,42 @@ span {
   font-weight: bold;
 }
 
+@media (max-width: 750px) and (orientation:landscape) {
+  .vertical-line {
+    display: none;
+  }
+  html,
+  body,
+  #root {
+
+  }
+}
+
+@media (max-height: 420px) and (orientation:landscape) {
+  h1 {
+    font-size: 1.6rem;
+  }
+  .card-content {
+    justify-content: center;
+  }
+}
+
+@media (orientation: portrait) and (max-height: 840px) {
+  
+}
+
 @media (orientation: portrait) {
   .card-body {
     flex-direction: column;
-    width: 600px;
-    height: 900px;
+    width: min(600px, 90vw);
+    height: min(900px, 90vh);
     align-items: center;
     justify-content: center;
     margin: auto
+  }
+  .avatar {
+    height: min(120px, 40vw);
+    width: min(120px, 40vw);
   }
   .card-content {
     margin-bottom: 2rem;
@@ -153,7 +194,7 @@ span {
   }
   .qrCode-container {
     height: 220px;
-    width: 500px;
+    width: min(600px, 90vw);
     align-items: center;
     display: flex;
     flex-direction: row;
@@ -163,9 +204,11 @@ span {
   .qrCode {
     margin: auto;
   }
-  h1,
-.birth-date,
-.student-name {
-  text-align: center;
-}
+  .userContent {
+    height: 9rem;
+  }
+  .authorized {
+    width: fit-content;
+    padding: 0 4rem;
+  }
 }

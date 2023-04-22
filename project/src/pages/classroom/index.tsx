@@ -171,7 +171,7 @@ export default function ClassRoom() {
   const weekDays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
 
   return (
-    <>
+    <div className="container">
       <Breadcrumbs aria-label="breadcrumb">
         <Link underline="hover" color="inherit" href="/">
           Home
@@ -271,6 +271,6 @@ export default function ClassRoom() {
           <Button onClick={handleSubmit}>Subscribe</Button>
         </DialogActions>
       </Dialog>
-    </>
+    </div>
   );
 }

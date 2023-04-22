@@ -72,7 +72,7 @@ const Card: React.FC = () => {
         <h1>{userData.group} de {userData.course}</h1>
         <div className={"user-content"}>
           <img
-            src="s"
+            src="# "
             className={"avatar"}
           />
           <span className={"student-name"}>{userData.name}</span>

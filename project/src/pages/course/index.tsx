@@ -121,7 +121,7 @@ export default function Course() {
   };
 
   return (
-    <>
+    <div className="container">
       <Breadcrumbs aria-label="breadcrumb">
         <Link underline="hover" color="inherit" href="/">
           Home
@@ -202,6 +202,6 @@ export default function Course() {
           <Button onClick={handleSubmit}>Subscribe</Button>
         </DialogActions>
       </Dialog>
-    </>
+    </div>
   );
 }
