@@ -15,6 +15,7 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import axios from "axios";
 import { Alert } from "@mui/material";
 import { useSignIn } from "react-auth-kit";
+import { useNavigate } from "react-router-dom";
 
 function Copyright(props: any) {
   return (
@@ -37,6 +38,7 @@ function Copyright(props: any) {
 const theme = createTheme();
 
 export default function SignIn() {
+  const navigate = useNavigate();
   const signIn = useSignIn();
   const [isAlert, setIsAlert] = React.useState({
     message: "",
@@ -71,7 +73,7 @@ export default function SignIn() {
           open: true,
         });
         // redicet to home page
-        //window.location.href = "/home";
+        navigate("../home");
       })
       .catch((error) => {
         setIsAlert({
