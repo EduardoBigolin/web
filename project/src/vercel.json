@@ -2,11 +2,14 @@
   "routes": [
     { "src": "/", "dest": "/" },
     { "src": "/login", "dest": "/login" },
-    { "src": "/class/educationLevel", "dest": "/niveis-educacionais" },
+    { "src": "/niveis-educacionais", "dest": "/class/educationLevel" },
     { "src": "/class/course", "dest": "/cursos" },
     { "src": "/class/classroom", "dest": "/turmas" },
     { "src": "/home", "dest": "/home" },
     { "src": "/card", "dest": "/card" },
-    { "src": "/card/public/:slug", "dest": "/card/public/:slug" }
+    { "src": "/card/public/:slug", "dest": "/card/public/:slug" },
+    {
+      "routes": [{ "src": "/[^.]+", "dest": "/", "status": 200 }]
+    }
   ]
 }
