@@ -9,7 +9,6 @@ import Paper from "@mui/material/Paper";
 import {
   Breadcrumbs,
   Button,
-  Checkbox,
   Dialog,
   DialogActions,
   DialogContent,
@@ -31,7 +30,12 @@ interface Classes {
   name: string;
 }
 
-const initialFormData: any = {
+interface FormValues {
+  name: string,
+  educationalLevelId: string,
+}
+
+const initialFormData = {
   name: "",
   educationalLevelId: "",
 };
@@ -39,7 +43,7 @@ const initialFormData: any = {
 export default function Course() {
   const authHeader = useAuthHeader();
   const [isAlter, setIsAlter] = React.useState(false);
-  const [formData, setFormData] = React.useState<any>(initialFormData);
+  const [formData, setFormData] = React.useState<FormValues>(initialFormData);
   const [rows, setRows] = React.useState<Classes[]>([]);
   const [open, setOpen] = React.useState(false);
   const [educationalLevels, setEducationalLevels] = React.useState<Classes[]>([]);
@@ -117,7 +121,7 @@ export default function Course() {
   };
 
   return (
-    <>
+    <div className="container">
       <Breadcrumbs aria-label="breadcrumb">
         <Link underline="hover" color="inherit" href="/">
           Home
@@ -198,6 +202,6 @@ export default function Course() {
           <Button onClick={handleSubmit}>Subscribe</Button>
         </DialogActions>
       </Dialog>
-    </>
+    </div>
   );
 }

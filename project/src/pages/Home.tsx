@@ -1,21 +1,23 @@
 import React from "react";
 import Header from "../components/Header";
 import { Link } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
 const Home: React.FC = () => {
+  const navigate = useNavigate();
   return (
     <>
       <Header />
       <h1>Home</h1>
       <ul>
         <li>
-          <Link href="/class">CRUD Class</Link>
+          <Link onClick={() => navigate("../class")}>CRUD Class</Link>
         </li>
         <li>
-          <Link href="/users">CRUD Users</Link>
+          <Link onClick={() => navigate("../users")}>CRUD Users</Link>
         </li>
         <li>
-          <Link href="/card">Cartão</Link>
+          <Link onClick={() => navigate("../card")}>Cartão</Link>
         </li>
       </ul>
     </>

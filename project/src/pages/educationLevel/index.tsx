@@ -29,17 +29,16 @@ interface EducationalLevelProps {
   name: string;
 }
 
-const initialFormData: any = {
+const initialFormData = {
   name: "",
 };
 
 export default function EducationLevel() {
   const authHeader = useAuthHeader();
   const [isAlter, setIsAlter] = React.useState(false);
-  const [formData, setFormData] = React.useState<any>(initialFormData);
+  const [formData, setFormData] = React.useState<EducationalLevelProps>(initialFormData);
   const [rows, setRows] = React.useState<Classes[]>([]);
   const [open, setOpen] = React.useState(false);
-  const [educationalLevel, setEducationalLevel] = React.useState<Classes[]>([]);
 
   function resetFormData() {
     setFormData(initialFormData);
@@ -77,44 +76,44 @@ export default function EducationLevel() {
     resetFormData();
   }
 
-  async function handleAlter(id: string, data: EducationalLevelProps) {
-    axios
-      .put(`http://localhost:3000/api/v1/educationLevel/${id}`, data, {
-        headers: {
-          Authorization: `${authHeader()}`,
-        },
-      })
-      .then(
-        (response) => {
-          console.log(response);
-        },
-        (error: AxiosError) => {
-          console.log(error);
-        }
-      );
+  // async function handleAlter(id: string, data: EducationalLevelProps) {
+  //   axios
+  //     .put(`http://localhost:3000/api/v1/educationLevel/${id}`, data, {
+  //       headers: {
+  //         Authorization: `${authHeader()}`,
+  //       },
+  //     })
+  //     .then(
+  //       (response) => {
+  //         console.log(response);
+  //       },
+  //       (error: AxiosError) => {
+  //         console.log(error);
+  //       }
+  //     );
 
-    setIsAlter(true);
-    resetFormData();
-  }
+  //   setIsAlter(true);
+  //   resetFormData();
+  // }
 
-  async function handleDelete(id: string) {
-    axios
-      .delete(`http://localhost:3000/api/v1/educationLevel/delete/${id}`, {
-        headers: {
-          Authorization: `${authHeader()}`,
-        },
-      })
-      .then(
-        (response) => {
-          console.log(response);
-        },
-        (error: AxiosError) => {
-          console.log(error);
-        }
-      );
-    setIsAlter(true);
-    resetFormData();
-  }
+  // async function handleDelete(id: string) {
+  //   axios
+  //     .delete(`http://localhost:3000/api/v1/educationLevel/delete/${id}`, {
+  //       headers: {
+  //         Authorization: `${authHeader()}`,
+  //       },
+  //     })
+  //     .then(
+  //       (response) => {
+  //         console.log(response);
+  //       },
+  //       (error: AxiosError) => {
+  //         console.log(error);
+  //       }
+  //     );
+  //   setIsAlter(true);
+  //   resetFormData();
+  // }
 
   React.useEffect(() => {
     axios
@@ -133,7 +132,7 @@ export default function EducationLevel() {
   }, [isAlter]);
 
   return (
-    <>
+    <div className="container">
       <Breadcrumbs aria-label="breadcrumb">
         <Link underline="hover" color="inherit" href="/">
           Home
@@ -200,6 +199,6 @@ export default function EducationLevel() {
           <Button onClick={handleSubmit}>Criar</Button>
         </DialogActions>
       </Dialog>
-    </>
+    </div>
   );
 }

@@ -15,6 +15,7 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import axios from "axios";
 import { Alert } from "@mui/material";
 import { useSignIn } from "react-auth-kit";
+import { useNavigate } from "react-router-dom";
 
 function Copyright(props: any) {
   return (
@@ -37,6 +38,7 @@ function Copyright(props: any) {
 const theme = createTheme();
 
 export default function SignIn() {
+  const navigate = useNavigate();
   const signIn = useSignIn();
   const [isAlert, setIsAlert] = React.useState({
     message: "",
@@ -44,7 +46,7 @@ export default function SignIn() {
     open: false,
   });
 
-  const [lodding, setLodding] = React.useState(false);
+  const [loading, setLoading] = React.useState(false);
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -58,9 +60,10 @@ export default function SignIn() {
       .then((response) => {
         console.log(response.data);
         response.data.id;
+        setLoading(true)
         signIn({
           token: response.data.token,
-          authState: { isdmin: response.data.isAdmin, id: response.data.id },
+          authState: { isAdmin: response.data.isAdmin, id: response.data.id },
           tokenType: "Bearer",
           expiresIn: 3600,
         });
@@ -70,7 +73,7 @@ export default function SignIn() {
           open: true,
         });
         // redicet to home page
-        window.location.href = "/home";
+        navigate("../home");
       })
       .catch((error) => {
         setIsAlert({
@@ -138,7 +141,7 @@ export default function SignIn() {
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
             >
-              {lodding ? "lodding..." : "Sign In"}
+              {loading ? "loading..." : "Sign In"}
             </Button>
             <Grid container>
               <Grid item xs>

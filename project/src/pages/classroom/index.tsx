@@ -34,19 +34,19 @@ interface Classes {
 interface ClassRoomProps {
   name: string;
   courseId: string;
-  lunch: string;
+  lunch: Array<string>;
 }
 
-const initialFormData: any = {
+const initialFormData = {
   name: "",
   courseId: "",
   lunch: [],
 };
 
 export default function ClassRoom() {
-  const [formData, setFormData] = React.useState<any>(initialFormData);
+  const [formData, setFormData] = React.useState<ClassRoomProps>(initialFormData);
   const [isAlter, setIsAlter] = React.useState(false);
-  const [lunch, setLunch] = React.useState<any>([]);
+  const [lunch, setLunch] = React.useState<Array<string>>([]);
 
   function resetFormData() {
     setCourse('');
@@ -78,25 +78,25 @@ export default function ClassRoom() {
     resetFormData();
   }
 
-  async function handleAlter(id: string, data: ClassRoomProps) {
-    axios
-      .put(`http://localhost:3000/api/v1/classroom/${id}`, data, {
-        headers: {
-          Authorization: `${authHeader()}`,
-        },
-      })
-      .then(
-        (response) => {
-          console.log(response);
-        },
-        (error: AxiosError) => {
-          console.log(error);
-        }
-      );
+  // async function handleAlter(id: string, data: ClassRoomProps) {
+  //   axios
+  //     .put(`http://localhost:3000/api/v1/classroom/${id}`, data, {
+  //       headers: {
+  //         Authorization: `${authHeader()}`,
+  //       },
+  //     })
+  //     .then(
+  //       (response) => {
+  //         console.log(response);
+  //       },
+  //       (error: AxiosError) => {
+  //         console.log(error);
+  //       }
+  //     );
 
-    setIsAlter(true);
-    resetFormData();
-  }
+  //   setIsAlter(true);
+  //   resetFormData();
+  // }
 
   async function handleDelete(id: string) {
     axios
@@ -124,6 +124,7 @@ export default function ClassRoom() {
   const [courses, setCourses] = React.useState<Classes[]>([]);
 
   React.useEffect(() => {
+    authHeader;
     axios
       .get("http://localhost:3000/api/v1/course", {
         headers: {
@@ -136,7 +137,6 @@ export default function ClassRoom() {
       .catch((error) => {
         console.log(error);
       });
-    setIsAlter(false);
 
     axios
       .get("http://localhost:3000/api/v1/classroom", {
@@ -150,7 +150,7 @@ export default function ClassRoom() {
       .catch((error) => {
         console.log(error);
       });
-    setIsAlter(false);
+    setIsAlter(!isAlter);
   }, [isAlter]);
   const [open, setOpen] = React.useState(false);
 
@@ -171,7 +171,7 @@ export default function ClassRoom() {
   const weekDays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
 
   return (
-    <>
+    <div className="container">
       <Breadcrumbs aria-label="breadcrumb">
         <Link underline="hover" color="inherit" href="/">
           Home
@@ -256,8 +256,8 @@ export default function ClassRoom() {
               checked={lunch.includes(day)}
               onChange={(event) => {
                 const checked = event.target.checked;
-                setLunch((prev: any) =>
-                  checked ? [...prev, day] : prev.filter((p:any) => p !== day)
+                setLunch((prev) =>
+                  checked ? [...prev, day] : prev.filter((p: string) => p !== day)
                 );
               }}
               inputProps={{ "aria-label": "controlled" }}
@@ -271,6 +271,6 @@ export default function ClassRoom() {
           <Button onClick={handleSubmit}>Subscribe</Button>
         </DialogActions>
       </Dialog>
-    </>
+    </div>
   );
 }
