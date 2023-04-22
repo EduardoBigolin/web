@@ -1,20 +1,40 @@
 import axios from "axios";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useAuthHeader, useAuthUser } from "react-auth-kit";
 import { QRCodeSVG } from "qrcode.react";
 import { useParams } from "react-router-dom";
 import IFLogo from "../../assets/IFLogo.svg";
-import moment from "moment";
+import IFRSLogo from "../../assets/IFRSLogo.png"
 import "./card.css";
 
-// import { Container } from './styles';
+const day = "SEGUNDA";
+
+interface UserData {
+  name: string,
+  group: string,
+  dateOfBirth: string,
+  link: string,
+  course: string,
+  photo: string,
+  lunch: Array<string>,
+}
+
+const initialUserData = {
+  name: '',
+  group: '',
+  dateOfBirth: '',
+  link: '',
+  course: '',
+  photo: '',
+  lunch: [],
+}
 
 const Card: React.FC = () => {
   const authHeader = useAuthHeader();
   const auth = useAuthUser();
-  const [userData, setUserData] = React.useState<any>([]);
+  const [userData, setUserData] = useState<UserData>(initialUserData);
+  const [loading, setLoading] = useState(true)
   const { slug } = useParams<{ slug: string }>();
-  const dia = moment().locale("pt-br");
 
   useEffect(() => {
     axios
@@ -30,42 +50,45 @@ const Card: React.FC = () => {
       )
       .then((response) => {
         setUserData(response.data.message);
-        console.log(userData);
       })
       .catch((error) => {
         console.log(error);
       });
+      setLoading(false)
   }, []);
-  console.log(dia.format("dddd"));
 
   return (
-    <div className="card-body">
+    <>
+    {loading ? (
+    <div className={"loading"}>
+      <p>Carregando...</p>
+    </div>
+    ) : (
+      <div className="card-body">
       <div className="logo-container">
-        <img src={IFLogo} alt={"logo do ifrs"} className={"logo"} />
+        <img src={IFRSLogo} alt={"logo do ifrs"} className={"logo"} />
       </div>
       <div className={"card-content"}>
-        <h1>{userData.group}</h1>
+        <h1>{userData.group} de {userData.course}</h1>
         <div className={"user-content"}>
           <img
-            src={`data:${userData.photoFile.mimetype};base64,${Buffer.from(
-              userData.photoFile.file.data
-            ).toString("base64")}`}
+            src="s"
             className={"avatar"}
           />
           <span className={"student-name"}>{userData.name}</span>
-          <span className={"birth-date"}>{userData.birth}</span>
+          <span className={"birth-date"}>{userData.dateOfBirth}</span>
         </div>
-        {/* <div
+        <div
           className={
-            userData.hasLunch.includes() ? "authorized" : "not-authorized"
+            userData.lunch.includes(day) ? "authorized" : "not-authorized"
           }
         >
-          {userData.hasLunch.includes() ? (
+          {userData.lunch.includes(day) ? (
             <span>Almoço Liberado</span>
           ) : (
             <span>Almoço Não Liberado</span>
           )}
-        </div> */}
+        </div>
       </div>
       <div className={"vertical-line"}></div>
       <div className={"qrCode-container"}>
@@ -87,6 +110,8 @@ const Card: React.FC = () => {
         )}
       </div>
     </div>
+    )}
+    </>
   );
 };
 

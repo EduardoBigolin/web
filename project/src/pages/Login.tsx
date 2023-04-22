@@ -60,7 +60,7 @@ export default function SignIn() {
         response.data.id;
         signIn({
           token: response.data.token,
-          authState: { isdmin: response.data.isAdmin, id: response.data.id },
+          authState: { isAdmin: response.data.isAdmin, id: response.data.id },
           tokenType: "Bearer",
           expiresIn: 3600,
         });
@@ -70,7 +70,7 @@ export default function SignIn() {
           open: true,
         });
         // redicet to home page
-        window.location.href = "/home";
+        //window.location.href = "/home";
       })
       .catch((error) => {
         setIsAlert({

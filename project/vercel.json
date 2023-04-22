@@ -1,0 +1,12 @@
+{
+  "routes": [
+    { "src": "/", "dest": "/" },
+    { "src": "/login", "dest": "/login" },
+    { "src": "/class/educationLevel", "dest": "/niveis-educacionais" },
+    { "src": "/class/course", "dest": "/cursos" },
+    { "src": "/class/classroom", "dest": "/turmas" },
+    { "src": "/home", "dest": "/home" },
+    { "src": "/card", "dest": "/card" },
+    { "src": "/card/public/:slug", "dest": "/card/public/:slug" }
+  ]
+}
