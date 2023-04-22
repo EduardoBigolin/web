@@ -1,12 +1,5 @@
 {
-  "redirects": [
-    { "source": "/", "destination": "/" },
-    { "source": "/login", "destination": "/login" },
-    { "source": "/niveis-educacionais", "destination": "/class/educationLevel" },
-    { "source": "/class/course", "destination": "/cursos" },
-    { "source": "/class/classroom", "destination": "/turmas" },
-    { "source": "/home", "destination": "/home" },
-    { "source": "/card", "destination": "/card" },
-    { "source": "/card/public/:slug", "destination": "/card/public/:slug" }
+  "rewrites":  [
+    {"source": "/(.*)", "destination": "/"}
   ]
 }
