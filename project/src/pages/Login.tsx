@@ -44,7 +44,7 @@ export default function SignIn() {
     open: false,
   });
 
-  const [lodding, setLodding] = React.useState(false);
+  const [loading, setLoading] = React.useState(false);
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -58,6 +58,7 @@ export default function SignIn() {
       .then((response) => {
         console.log(response.data);
         response.data.id;
+        setLoading(true)
         signIn({
           token: response.data.token,
           authState: { isAdmin: response.data.isAdmin, id: response.data.id },
@@ -138,7 +139,7 @@ export default function SignIn() {
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
             >
-              {lodding ? "lodding..." : "Sign In"}
+              {loading ? "loading..." : "Sign In"}
             </Button>
             <Grid container>
               <Grid item xs>
