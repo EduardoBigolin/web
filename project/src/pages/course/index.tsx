@@ -6,9 +6,24 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-import { Breadcrumbs, Button, Typography } from "@mui/material";
+import {
+  Breadcrumbs,
+  Button,
+  Checkbox,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  SelectChangeEvent,
+  TextField,
+  Typography,
+} from "@mui/material";
 import Link from "@mui/material/Link";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { useAuthHeader } from "react-auth-kit";
 
 interface Classes {
@@ -16,11 +31,64 @@ interface Classes {
   name: string;
 }
 
+const initialFormData: any = {
+  name: "",
+  educationalLevelId: "",
+};
+
 export default function Course() {
   const authHeader = useAuthHeader();
+  const [isAlter, setIsAlter] = React.useState(false);
+  const [formData, setFormData] = React.useState<any>(initialFormData);
   const [rows, setRows] = React.useState<Classes[]>([]);
+  const [open, setOpen] = React.useState(false);
+  const [educationalLevels, setEducationalLevels] = React.useState<Classes[]>([]);
+  const [educationalLevel, setEducationalLevel] = React.useState("");
+
+  function resetFormData() {
+    setEducationalLevel("");
+    setFormData(initialFormData);
+  }
+
+  async function handleSubmit() {
+    axios
+      .post(
+        "http://localhost:3000/api/v1/course/create",
+        { name: formData.name, educationLevelId: educationalLevel },
+        {
+          headers: {
+            Authorization: `${authHeader()}`,
+          },
+        }
+      )
+      .then(
+        (response) => {
+          console.log(response);
+        },
+        (error: AxiosError) => {
+          console.log(error);
+        }
+      );
+    setIsAlter(true);
+    handleClose();
+    resetFormData();
+  }
 
   React.useEffect(() => {
+    axios
+      .get("http://localhost:3000/api/v1/educationLevel", {
+        headers: {
+          Authorization: `${authHeader()}`,
+        },
+      })
+      .then((response) => {
+        setEducationalLevels(response.data.message);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    setIsAlter(false);
+
     axios
       .get("http://localhost:3000/api/v1/course", {
         headers: {
@@ -33,7 +101,21 @@ export default function Course() {
       .catch((error) => {
         console.log(error);
       });
-  }, []);
+    setIsAlter(false);
+  }, [isAlter]);
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const handleChange = (event: SelectChangeEvent) => {
+    setEducationalLevel(event.target.value as string);
+  };
+
   return (
     <>
       <Breadcrumbs aria-label="breadcrumb">
@@ -46,7 +128,9 @@ export default function Course() {
         <Typography color="text.primary">Course</Typography>
       </Breadcrumbs>
       <br />
-      <Button variant="contained">Criar</Button>
+      <Button variant="contained" onClick={handleClickOpen}>
+        Criar
+      </Button>
       <br />
       <TableContainer component={Paper}>
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
@@ -81,6 +165,39 @@ export default function Course() {
           </TableBody>
         </Table>
       </TableContainer>
+      <Dialog open={open} onClose={handleClose}>
+        <DialogTitle>Subscribe</DialogTitle>
+        <DialogContent>
+          <TextField
+            autoFocus
+            margin="dense"
+            id="name"
+            label="Name"
+            type="text"
+            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+            fullWidth
+            variant="standard"
+          />
+          <FormControl fullWidth>
+            <InputLabel id="demo-simple-select-label">Course</InputLabel>
+            <Select
+              labelId="demo-simple-select-label"
+              id="demo-simple-select"
+              value={educationalLevel}
+              label="Nível Educacional"
+              onChange={handleChange}
+            >
+              {educationalLevels.map((el) => (
+                <MenuItem value={el.id}>{el.name}</MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose}>Cancel</Button>
+          <Button onClick={handleSubmit}>Subscribe</Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 }

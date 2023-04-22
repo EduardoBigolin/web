@@ -1,14 +1,23 @@
-import * as React from "react";
+import {
+  Breadcrumbs,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  TextField,
+  Typography,
+} from "@mui/material";
+import Link from "@mui/material/Link";
+import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
-import Paper from "@mui/material/Paper";
-import { Breadcrumbs, Button, Typography } from "@mui/material";
-import Link from "@mui/material/Link";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
+import * as React from "react";
 import { useAuthHeader } from "react-auth-kit";
 
 interface Classes {
@@ -16,9 +25,96 @@ interface Classes {
   name: string;
 }
 
+interface EducationalLevelProps {
+  name: string;
+}
+
+const initialFormData: any = {
+  name: "",
+};
+
 export default function EducationLevel() {
   const authHeader = useAuthHeader();
+  const [isAlter, setIsAlter] = React.useState(false);
+  const [formData, setFormData] = React.useState<any>(initialFormData);
   const [rows, setRows] = React.useState<Classes[]>([]);
+  const [open, setOpen] = React.useState(false);
+  const [educationalLevel, setEducationalLevel] = React.useState<Classes[]>([]);
+
+  function resetFormData() {
+    setFormData(initialFormData);
+  }
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  async function handleSubmit() {
+    axios
+      .post(
+        "http://localhost:3000/api/v1/educationLevel/create",
+        { name: formData.name },
+        {
+          headers: {
+            Authorization: `${authHeader()}`,
+          },
+        }
+      )
+      .then(
+        (response) => {
+          console.log(response);
+        },
+        (error: AxiosError) => {
+          console.log(error);
+        }
+      );
+    setIsAlter(true);
+    handleClose();
+    resetFormData();
+  }
+
+  async function handleAlter(id: string, data: EducationalLevelProps) {
+    axios
+      .put(`http://localhost:3000/api/v1/educationLevel/${id}`, data, {
+        headers: {
+          Authorization: `${authHeader()}`,
+        },
+      })
+      .then(
+        (response) => {
+          console.log(response);
+        },
+        (error: AxiosError) => {
+          console.log(error);
+        }
+      );
+
+    setIsAlter(true);
+    resetFormData();
+  }
+
+  async function handleDelete(id: string) {
+    axios
+      .delete(`http://localhost:3000/api/v1/educationLevel/delete/${id}`, {
+        headers: {
+          Authorization: `${authHeader()}`,
+        },
+      })
+      .then(
+        (response) => {
+          console.log(response);
+        },
+        (error: AxiosError) => {
+          console.log(error);
+        }
+      );
+    setIsAlter(true);
+    resetFormData();
+  }
 
   React.useEffect(() => {
     axios
@@ -33,7 +129,9 @@ export default function EducationLevel() {
       .catch((error) => {
         console.log(error);
       });
-  }, []);
+    setIsAlter(false);
+  }, [isAlter]);
+
   return (
     <>
       <Breadcrumbs aria-label="breadcrumb">
@@ -46,7 +144,9 @@ export default function EducationLevel() {
         <Typography color="text.primary">EducationLevel</Typography>
       </Breadcrumbs>
       <br />
-      <Button variant="contained">Criar</Button>
+      <Button variant="contained" onClick={handleClickOpen}>
+        Criar
+      </Button>
       <br />
       <TableContainer component={Paper}>
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
@@ -81,6 +181,25 @@ export default function EducationLevel() {
           </TableBody>
         </Table>
       </TableContainer>
+      <Dialog open={open} onClose={handleClose}>
+        <DialogTitle>Criar Nível de Ensino</DialogTitle>
+        <DialogContent>
+          <TextField
+            autoFocus
+            margin="dense"
+            id="name"
+            label="Nome"
+            type="text"
+            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+            fullWidth
+            variant="standard"
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose}>Cancelar</Button>
+          <Button onClick={handleSubmit}>Criar</Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 }

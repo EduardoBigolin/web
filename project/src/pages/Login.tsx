@@ -56,9 +56,11 @@ export default function SignIn() {
       })
 
       .then((response) => {
+        console.log(response.data);
+        response.data.id;
         signIn({
           token: response.data.token,
-          authState: response.data.isAdmin,
+          authState: { isdmin: response.data.isAdmin, id: response.data.id },
           tokenType: "Bearer",
           expiresIn: 3600,
         });
