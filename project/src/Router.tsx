@@ -7,11 +7,21 @@ import Course from "./pages/course";
 import EducationLevel from "./pages/educationLevel";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
+import User from "./pages/user";
 
 function Router() {
   return (
     <Routes>
       <Route path={"/login"} element={<Login />} />
+      <Route
+        path={"/user"}
+        element={
+          <RequireAuth loginPath={"/login"}>
+            <User />
+          </RequireAuth>
+        }
+      />
+
       <Route
         path={"/"}
         element={

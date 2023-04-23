@@ -3,6 +3,7 @@ import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
+import { useEffect } from "react";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
 import Link from "@mui/material/Link";
@@ -14,10 +15,19 @@ import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import axios from "axios";
 import { Alert } from "@mui/material";
-import { useSignIn } from "react-auth-kit";
+import { useSignIn, useAuthHeader } from "react-auth-kit";
 import { useNavigate } from "react-router-dom";
 
 function Copyright(props: any) {
+  const navigate = useNavigate();
+  const authHeader = useAuthHeader();
+
+  useEffect(() => {
+    if (authHeader()) {
+      navigate("../home");
+    }
+  }, []);
+
   return (
     <Typography
       variant="body2"
@@ -26,7 +36,7 @@ function Copyright(props: any) {
       {...props}
     >
       {"Copyright © "}
-      <Link color="inherit" href="https://mui.com/">
+      <Link color="inherit" href="/">
         Your Website
       </Link>{" "}
       {new Date().getFullYear()}
@@ -60,7 +70,7 @@ export default function SignIn() {
       .then((response) => {
         console.log(response.data);
         response.data.id;
-        setLoading(true)
+        setLoading(true);
         signIn({
           token: response.data.token,
           authState: { isAdmin: response.data.isAdmin, id: response.data.id },
@@ -72,7 +82,6 @@ export default function SignIn() {
           type: "success",
           open: true,
         });
-        // redicet to home page
         navigate("../home");
       })
       .catch((error) => {

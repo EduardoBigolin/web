@@ -26,39 +26,53 @@ import Link from "@mui/material/Link";
 import axios, { AxiosError } from "axios";
 import { useAuthHeader } from "react-auth-kit";
 
-interface Classes {
+interface Courses {
   id: string;
   name: string;
 }
 
 interface ClassRoomProps {
+  id: string;
   name: string;
+  course: string;
   courseId: string;
   lunch: Array<string>;
 }
 
 const initialFormData = {
+  id: "",
   name: "",
+  Couser: {
+    name: "",
+  },
   courseId: "",
+  course: "",
   lunch: [],
 };
 
 export default function ClassRoom() {
-  const [formData, setFormData] = React.useState<ClassRoomProps>(initialFormData);
+  const authHeader = useAuthHeader();
+  const [rows, setRows] = React.useState<ClassRoomProps[]>([]);
+  const [courses, setCourses] = React.useState<Courses[]>([]);
+  const [formData, setFormData] =
+    React.useState<ClassRoomProps>(initialFormData);
   const [isAlter, setIsAlter] = React.useState(false);
-  const [lunch, setLunch] = React.useState<Array<string>>([]);
+  const [alter, setAlter] = React.useState(false);
 
   function resetFormData() {
-    setCourse('');
     setFormData(initialFormData);
-    setLunch([]);
+    setAlter(false)
   }
 
   async function handleSubmit() {
     axios
       .post(
         "http://localhost:3000/api/v1/classroom/create",
-        { name: formData.name, courseId: course, lunch: JSON.stringify(lunch) },
+        {
+          name: formData.name,
+          couserId: formData.courseId,
+          lunch: formData.lunch,
+        },
         {
           headers: {
             Authorization: `${authHeader()}`,
@@ -78,27 +92,39 @@ export default function ClassRoom() {
     resetFormData();
   }
 
-  // async function handleAlter(id: string, data: ClassRoomProps) {
-  //   axios
-  //     .put(`http://localhost:3000/api/v1/classroom/${id}`, data, {
-  //       headers: {
-  //         Authorization: `${authHeader()}`,
-  //       },
-  //     })
-  //     .then(
-  //       (response) => {
-  //         console.log(response);
-  //       },
-  //       (error: AxiosError) => {
-  //         console.log(error);
-  //       }
-  //     );
+  function formUpdate(data: ClassRoomProps) {
+    setFormData(data);
+    setAlter(true);
+    handleClickOpen();
+  }
 
-  //   setIsAlter(true);
-  //   resetFormData();
-  // }
+  async function handleAlter(id: string, data: {
+    name: string,
+    couserId: string,
+    lunch: [string]
+  }) {
+    axios
+      .put(`http://localhost:3000/api/v1/classRoom/alter/${id}`, data, {
+        headers: {
+          Authorization: `${authHeader()}`,
+        },
+      })
+      .then(
+        (response) => {
+          console.log(response);
+        },
+        (error: AxiosError) => {
+          console.log(error);
+        }
+      );
+    setIsAlter(true);
+    handleClose();
+    resetFormData();
+  }
 
   async function handleDelete(id: string) {
+    console.log("delete");
+
     axios
       .delete(`http://localhost:3000/api/v1/classroom/delete/${id}`, {
         headers: {
@@ -117,12 +143,6 @@ export default function ClassRoom() {
     resetFormData();
   }
 
-  const authHeader = useAuthHeader();
-
-  const [rows, setRows] = React.useState<Classes[]>([]);
-
-  const [courses, setCourses] = React.useState<Classes[]>([]);
-
   React.useEffect(() => {
     authHeader;
     axios
@@ -133,6 +153,7 @@ export default function ClassRoom() {
       })
       .then((response) => {
         setCourses(response.data.message);
+        console.log(response.data.message);
       })
       .catch((error) => {
         console.log(error);
@@ -146,11 +167,12 @@ export default function ClassRoom() {
       })
       .then((response) => {
         setRows(response.data.message);
+        console.log(response.data.message);
       })
       .catch((error) => {
         console.log(error);
       });
-    setIsAlter(!isAlter);
+    setIsAlter(false);
   }, [isAlter]);
   const [open, setOpen] = React.useState(false);
 
@@ -160,15 +182,10 @@ export default function ClassRoom() {
 
   const handleClose = () => {
     setOpen(false);
+    resetFormData();
   };
 
-  const [course, setCourse] = React.useState("");
-
-  const handleChange = (event: SelectChangeEvent) => {
-    setCourse(event.target.value as string);
-  };
-
-  const weekDays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
+  const weekDays = ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY"];
 
   return (
     <div className="container">
@@ -185,8 +202,10 @@ export default function ClassRoom() {
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead>
             <TableRow>
-              <TableCell align="right">Name</TableCell>
-              <TableCell align="right">Actions</TableCell>
+              <TableCell align="left">Nome</TableCell>
+              <TableCell align="left">Curso</TableCell>
+              <TableCell align="left">Dias de Almoço</TableCell>
+              <TableCell align="right">Ações</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -198,11 +217,21 @@ export default function ClassRoom() {
                 <TableCell component="th" scope="row">
                   {row.name}
                 </TableCell>
+                <TableCell component="th" scope="row">
+                  {row.course}
+                </TableCell>
+                <TableCell component="th" scope="row">
+                  {row.lunch.map((e) => (<span> {e} </span>))}
+                </TableCell>
                 <TableCell
                   align="right"
                   sx={{ "&": { display: "flex", gap: 2 } }}
                 >
-                  <Button variant="outlined" color="success">
+                  <Button
+                    onClick={() => formUpdate(row)}
+                    variant="outlined"
+                    color="success"
+                  >
                     Alter
                   </Button>
                   <Button
@@ -231,6 +260,7 @@ export default function ClassRoom() {
             label="Name"
             type="text"
             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+            value={formData.name}
             fullWidth
             variant="standard"
           />
@@ -239,9 +269,11 @@ export default function ClassRoom() {
             <Select
               labelId="demo-simple-select-label"
               id="demo-simple-select"
-              value={course}
+              value={formData.courseId}
               label="Course"
-              onChange={handleChange}
+              onChange={(e) =>
+                setFormData({ ...formData, courseId: e.target.value })
+              }
             >
               {courses.map((course) => (
                 <MenuItem value={course.id}>{course.name}</MenuItem>
@@ -250,14 +282,19 @@ export default function ClassRoom() {
           </FormControl>
         </DialogContent>
 
-        {weekDays.map((day) => (
+        {weekDays.map((day: string) => (
           <div>
             <Checkbox
-              checked={lunch.includes(day)}
+              checked={formData.lunch.includes(day)}
               onChange={(event) => {
                 const checked = event.target.checked;
-                setLunch((prev) =>
-                  checked ? [...prev, day] : prev.filter((p: string) => p !== day)
+                setFormData((prev: ClassRoomProps) =>
+                  checked
+                    ? { ...prev, lunch: [...prev.lunch, day] }
+                    : {
+                        ...prev,
+                        lunch: prev.lunch.filter((p: string) => p !== day),
+                      }
                 );
               }}
               inputProps={{ "aria-label": "controlled" }}
@@ -268,7 +305,20 @@ export default function ClassRoom() {
 
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>
-          <Button onClick={handleSubmit}>Subscribe</Button>
+          <Button
+            onClick={
+              alter
+                ? () =>
+                    handleAlter(formData.id, {
+                      name: formData.name,
+                      couserId: formData.courseId,
+                      lunch: formData.lunch as [string],
+                    })
+                : () => handleSubmit()
+            }
+          >
+            {alter ? "Alterar" : "Adicionar"}
+          </Button>
         </DialogActions>
       </Dialog>
     </div>
