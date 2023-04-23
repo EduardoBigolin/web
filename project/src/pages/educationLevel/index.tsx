@@ -30,18 +30,21 @@ interface EducationalLevelProps {
 }
 
 const initialFormData = {
+  id: "",
   name: "",
 };
 
 export default function EducationLevel() {
   const authHeader = useAuthHeader();
   const [isAlter, setIsAlter] = React.useState(false);
-  const [formData, setFormData] = React.useState<EducationalLevelProps>(initialFormData);
+  const [formData, setFormData] = React.useState<Classes>(initialFormData);
   const [rows, setRows] = React.useState<Classes[]>([]);
   const [open, setOpen] = React.useState(false);
+  const [alter, setAlter] = React.useState(false);
 
   function resetFormData() {
     setFormData(initialFormData);
+    setAlter(false);
   }
 
   const handleClickOpen = () => {
@@ -50,6 +53,7 @@ export default function EducationLevel() {
 
   const handleClose = () => {
     setOpen(false);
+    resetFormData();
   };
 
   async function handleSubmit() {
@@ -76,44 +80,50 @@ export default function EducationLevel() {
     resetFormData();
   }
 
-  // async function handleAlter(id: string, data: EducationalLevelProps) {
-  //   axios
-  //     .put(`http://localhost:3000/api/v1/educationLevel/${id}`, data, {
-  //       headers: {
-  //         Authorization: `${authHeader()}`,
-  //       },
-  //     })
-  //     .then(
-  //       (response) => {
-  //         console.log(response);
-  //       },
-  //       (error: AxiosError) => {
-  //         console.log(error);
-  //       }
-  //     );
+  function formUpdate(data: Classes) {
+    setFormData(data);
+    setAlter(true);
+    handleClickOpen();
+  }
 
-  //   setIsAlter(true);
-  //   resetFormData();
-  // }
+  async function handleAlter(id: string, data: EducationalLevelProps) {
+    axios
+      .put(`http://localhost:3000/api/v1/educationLevel/alter/${id}`, data, {
+        headers: {
+          Authorization: `${authHeader()}`,
+        },
+      })
+      .then(
+        (response) => {
+          console.log(response);
+        },
+        (error: AxiosError) => {
+          console.log(error);
+        }
+      );
+    setIsAlter(true);
+    handleClose();
+    resetFormData();
+  }
 
-  // async function handleDelete(id: string) {
-  //   axios
-  //     .delete(`http://localhost:3000/api/v1/educationLevel/delete/${id}`, {
-  //       headers: {
-  //         Authorization: `${authHeader()}`,
-  //       },
-  //     })
-  //     .then(
-  //       (response) => {
-  //         console.log(response);
-  //       },
-  //       (error: AxiosError) => {
-  //         console.log(error);
-  //       }
-  //     );
-  //   setIsAlter(true);
-  //   resetFormData();
-  // }
+  async function handleDelete(id: string) {
+    axios
+      .delete(`http://localhost:3000/api/v1/educationLevel/delete/${id}`, {
+        headers: {
+          Authorization: `${authHeader()}`,
+        },
+      })
+      .then(
+        (response) => {
+          console.log(response);
+        },
+        (error: AxiosError) => {
+          console.log(error);
+        }
+      );
+    setIsAlter(true);
+    resetFormData();
+  }
 
   React.useEffect(() => {
     axios
@@ -168,10 +178,18 @@ export default function EducationLevel() {
                   align="right"
                   sx={{ "&": { display: "flex", gap: 2 } }}
                 >
-                  <Button variant="outlined" color="success">
+                  <Button
+                    onClick={() => formUpdate(row)}
+                    variant="outlined"
+                    color="success"
+                  >
                     Alter
                   </Button>
-                  <Button variant="outlined" color="error">
+                  <Button
+                    onClick={() => handleDelete(row.id)}
+                    variant="outlined"
+                    color="error"
+                  >
                     Delete
                   </Button>
                 </TableCell>
@@ -190,13 +208,22 @@ export default function EducationLevel() {
             label="Nome"
             type="text"
             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+            value={formData.name}
             fullWidth
             variant="standard"
           />
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Cancelar</Button>
-          <Button onClick={handleSubmit}>Criar</Button>
+          <Button
+            onClick={
+              alter
+                ? () => handleAlter(formData.id, { name: formData.name })
+                : () => handleSubmit()
+            }
+          >
+            {alter ? "Alterar" : "Adicionar"}
+          </Button>
         </DialogActions>
       </Dialog>
     </div>

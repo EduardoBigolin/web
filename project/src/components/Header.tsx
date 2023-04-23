@@ -10,11 +10,15 @@ import Container from "@mui/material/Container";
 import Button from "@mui/material/Button";
 import MenuItem from "@mui/material/MenuItem";
 import AdbIcon from "@mui/icons-material/Adb";
+import { useAuthHeader, useSignOut } from "react-auth-kit";
 
 const pages = ["Products", "Pricing", "Blog"];
 const settings = ["Profile", "Account", "Dashboard", "Logout"];
 
 function Header() {
+  const authHeader = useAuthHeader();
+  const signOut = useSignOut();
+
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
     null
   );
@@ -126,12 +130,16 @@ function Header() {
           </Box>
 
           <Box sx={{ flexGrow: 0 }}>
-            <button>Login</button>
-            {/* <Tooltip title="Open settings"> */}
-            {/* <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
-              </IconButton> */}
-            {/* </Tooltip> */}
+            {authHeader ? (
+              <button onClick={() => signOut()}>Sign Out</button>
+            ) : (
+              <Button
+                onClick={handleCloseUserMenu}
+                sx={{ my: 2, color: "white", display: "block" }}
+              >
+                Login
+              </Button>
+            )}
             <Menu
               sx={{ mt: "45px" }}
               id="menu-appbar"

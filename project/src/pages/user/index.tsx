@@ -29,48 +29,71 @@ interface Classes {
   name: string;
 }
 
-interface FormValues {
+interface User {
   id: string;
   name: string;
-  educationLevelId: string;
-  educationLevel: {
+  email:string;
+  dateOfBirth: string;
+  isAdmin: boolean;
+  photoFile: string;
+  classId: string;
+  class: {
     name: string;
-  };
+    Couser: {
+      name: string
+    }
+  }
 }
 
 const initialFormData = {
-  id: "",
-  name: "",
-  educationLevelId: "",
-  educationLevel: {
-    name: "",
+  id: '',
+  name: '',
+  email:'',
+  dateOfBirth: '',
+  isAdmin: false,
+  photoFile: '',
+  classId: '',
+  class: {
+    name: '',
+    Couser: {
+      name: '',
+    },
   },
 };
 
-export default function Course() {
+export default function ClassRoom() {
   const authHeader = useAuthHeader();
+  const [rows, setRows] = React.useState<User[]>([]);
+  const [classes, setClasses] = React.useState<Classes[]>([]);
+  const [formData, setFormData] =
+    React.useState<User>(initialFormData);
   const [isAlter, setIsAlter] = React.useState(false);
-  const [formData, setFormData] = React.useState<FormValues>(initialFormData);
-  const [rows, setRows] = React.useState<FormValues[]>([]);
-  const [open, setOpen] = React.useState(false);
-  const [educationalLevels, setEducationalLevels] = React.useState<Classes[]>(
-    []
-  );
   const [alter, setAlter] = React.useState(false);
+  const [pass, setPass] = React.useState<string>('')
+  const [file, setFile] = React.useState<File | null | undefined>()
 
   function resetFormData() {
     setFormData(initialFormData);
     setAlter(false);
+    setPass('')
   }
 
   async function handleSubmit() {
     axios
       .post(
-        "http://localhost:3000/api/v1/course/create",
-        { name: formData.name, educationLevelId: formData.educationLevelId },
+        "http://localhost:3000/api/v1/user/create",
+        {
+          name: formData.name,
+          dateOfBirth: formData.dateOfBirth,
+          email: formData.email,
+          password: pass,
+          classId: formData.classId,
+          photoFile: file,
+        },
         {
           headers: {
             Authorization: `${authHeader()}`,
+            "Content-Type": "multipart/form-data",
           },
         }
       )
@@ -87,46 +110,7 @@ export default function Course() {
     resetFormData();
   }
 
-  React.useEffect(() => {
-    axios
-      .get("http://localhost:3000/api/v1/educationLevel", {
-        headers: {
-          Authorization: `${authHeader()}`,
-        },
-      })
-      .then((response) => {
-        setEducationalLevels(response.data.message);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-    setIsAlter(false);
-
-    axios
-      .get("http://localhost:3000/api/v1/course", {
-        headers: {
-          Authorization: `${authHeader()}`,
-        },
-      })
-      .then((response) => {
-        setRows(response.data.message);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-    setIsAlter(false);
-  }, [isAlter]);
-
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-    resetFormData();
-  };
-
-  function formUpdate(data: FormValues) {
+  function formUpdate(data: User) {
     setFormData(data);
     setAlter(true);
     handleClickOpen();
@@ -135,12 +119,16 @@ export default function Course() {
   async function handleAlter(
     id: string,
     data: {
-      name: string;
-      educationLevelId: string;
-    }
+      name: string,
+      dateOfBirth: string
+      email: string,
+      password: string,
+      classId: string,
+      photoFile: File | null | undefined,
+    },
   ) {
     axios
-      .put(`http://localhost:3000/api/v1/course/alter/${id}`, data, {
+      .put(`http://localhost:3000/api/v1/user/alter/${id}`, data, {
         headers: {
           Authorization: `${authHeader()}`,
         },
@@ -159,8 +147,10 @@ export default function Course() {
   }
 
   async function handleDelete(id: string) {
+    console.log("delete");
+
     axios
-      .delete(`http://localhost:3000/api/v1/course/delete/${id}`, {
+      .delete(`http://localhost:3000/api/v1/user/delete/${id}`, {
         headers: {
           Authorization: `${authHeader()}`,
         },
@@ -177,28 +167,64 @@ export default function Course() {
     resetFormData();
   }
 
+  React.useEffect(() => {
+    authHeader;
+    axios
+      .get("http://localhost:3000/api/v1/classroom", {
+        headers: {
+          Authorization: `${authHeader()}`,
+        },
+      })
+      .then((response) => {
+        setClasses(response.data.message);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+
+    axios
+      .get("http://localhost:3000/api/v1/user", {
+        headers: {
+          Authorization: `${authHeader()}`,
+        },
+      })
+      .then((response) => {
+        setRows(response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    setIsAlter(false);
+  }, [isAlter]);
+
+  const [open, setOpen] = React.useState(false);
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+    resetFormData();
+  };
+
   return (
     <div className="container">
       <Breadcrumbs aria-label="breadcrumb">
         <Link underline="hover" color="inherit" href="/">
           Home
         </Link>
-        <Link underline="hover" color="inherit" href="/class">
-          Class
-        </Link>
-        <Typography color="text.primary">Course</Typography>
+        <Typography color="text.primary">User</Typography>
       </Breadcrumbs>
-      <br />
-      <Button variant="contained" onClick={handleClickOpen}>
-        Criar
-      </Button>
-      <br />
       <TableContainer component={Paper}>
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead>
             <TableRow>
+              <TableCell align="left">Imagem</TableCell>
               <TableCell align="left">Nome</TableCell>
-              <TableCell align="left">Nível de Ensino</TableCell>
+              <TableCell align="left">E-mail</TableCell>
+              <TableCell align="left">Data de Nascimento</TableCell>
+              <TableCell align="left">Turma</TableCell>
               <TableCell align="right">Ações</TableCell>
             </TableRow>
           </TableHead>
@@ -209,10 +235,19 @@ export default function Course() {
                 sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
               >
                 <TableCell component="th" scope="row">
+                  <img className="userImg" src={"data:image/jpeg;base64, " + row.photoFile} alt="" />
+                </TableCell>
+                <TableCell component="th" scope="row">
                   {row.name}
                 </TableCell>
                 <TableCell component="th" scope="row">
-                  {row.educationLevel.name}
+                  {row.email}
+                </TableCell>
+                <TableCell component="th" scope="row">
+                  {row.dateOfBirth}
+                </TableCell>
+                <TableCell component="th" scope="row">
+                  {row.class.name} de {row.class.Couser.name}
                 </TableCell>
                 <TableCell
                   align="right"
@@ -238,6 +273,9 @@ export default function Course() {
           </TableBody>
         </Table>
       </TableContainer>
+      <Button variant="outlined" onClick={handleClickOpen}>
+        Adicionar
+      </Button>
       <Dialog open={open} onClose={handleClose}>
         <DialogTitle>Subscribe</DialogTitle>
         <DialogContent>
@@ -245,30 +283,65 @@ export default function Course() {
             autoFocus
             margin="dense"
             id="name"
-            label="Nome"
+            label="Name"
             type="text"
             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
             value={formData.name}
             fullWidth
             variant="standard"
           />
+          <TextField
+            autoFocus
+            margin="dense"
+            id="name"
+            label="E-mail"
+            type="email"
+            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+            value={formData.email}
+            fullWidth
+            variant="standard"
+          />
+          <TextField
+            autoFocus
+            margin="dense"
+            id="name"
+            label="Senha"
+            type="text"
+            onChange={(e) => setPass(e.target.value)}
+            value={pass}
+            fullWidth
+            variant="standard"
+          />
+          <TextField
+            autoFocus
+            margin="dense"
+            id="name"
+            type="date"
+            onChange={(e) => setFormData({ ...formData, dateOfBirth: e.target.value})}
+            value={formData.dateOfBirth}
+            fullWidth
+            variant="standard"
+          />
           <FormControl fullWidth>
-            <InputLabel id="demo-simple-select-label">
-              Nível de Ensino
-            </InputLabel>
+            <InputLabel id="demo-simple-select-label">class</InputLabel>
             <Select
               labelId="demo-simple-select-label"
               id="demo-simple-select"
-              value={formData.educationLevelId}
-              label="Nível Educacional"
+              value={formData.classId}
+              label="Class"
               onChange={(e) =>
-                setFormData({ ...formData, educationLevelId: e.target.value })
+                setFormData({ ...formData, classId: e.target.value })
               }
             >
-              {educationalLevels.map((el) => (
-                <MenuItem value={el.id}>{el.name}</MenuItem>
+              {classes.map((c: Classes) => (
+                <MenuItem value={c.id}>{c.name}</MenuItem>
               ))}
             </Select>
+            {alter ? ""
+            : (<Button variant="contained" component="label">
+              Upload
+              <input hidden accept="image/*" multiple type="file" onChange={(e) => setFile(e.target.files[0])} />
+            </Button>)}
           </FormControl>
         </DialogContent>
         <DialogActions>
@@ -279,7 +352,11 @@ export default function Course() {
                 ? () =>
                     handleAlter(formData.id, {
                       name: formData.name,
-                      educationLevelId: formData.educationLevelId,
+                      dateOfBirth: formData.dateOfBirth,
+                      email: formData.email,
+                      password: pass,
+                      classId: formData.classId,
+                      photoFile: file,
                     })
                 : () => handleSubmit()
             }
