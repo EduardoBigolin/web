@@ -12,7 +12,6 @@ import MenuItem from "@mui/material/MenuItem";
 import AdbIcon from "@mui/icons-material/Adb";
 import { useAuthHeader, useSignOut } from "react-auth-kit";
 
-const pages = ["Products", "Pricing", "Blog"];
 const settings = ["Profile", "Account", "Dashboard", "Logout"];
 
 function Header() {
@@ -29,10 +28,6 @@ function Header() {
   const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElNav(event.currentTarget);
   };
-  // const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
-  //   setAnchorElUser(event.currentTarget);
-  // };
-
   const handleCloseNavMenu = () => {
     setAnchorElNav(null);
   };
@@ -41,8 +36,9 @@ function Header() {
     setAnchorElUser(null);
   };
 
+  const logout = useSignOut();
   return (
-    <AppBar position="static">
+    <AppBar position="static" sx={{ backgroundColor: "green" }}>
       <Container maxWidth="xl">
         <Toolbar disableGutters>
           <Typography
@@ -55,11 +51,15 @@ function Header() {
               display: { xs: "none", md: "flex" },
               fontWeight: 700,
               letterSpacing: ".3rem",
-              color: "inherit",
+              color: "white",
               textDecoration: "none",
             }}
           >
-            IFRS
+            <img
+              className="logo-ifrs"
+              src="https://ifrs.edu.br/wp-content/uploads/2017/08/logo_vertical.png"
+              alt=""
+            />
           </Typography>
 
           <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
@@ -90,15 +90,8 @@ function Header() {
               sx={{
                 display: { xs: "block", md: "none" },
               }}
-            >
-              {pages.map((page) => (
-                <MenuItem key={page} onClick={handleCloseNavMenu}>
-                  <Typography textAlign="center">{page}</Typography>
-                </MenuItem>
-              ))}
-            </Menu>
+            ></Menu>
           </Box>
-          <AdbIcon sx={{ display: { xs: "flex", md: "none" }, mr: 1 }} />
           <Typography
             variant="h5"
             noWrap
@@ -115,23 +108,23 @@ function Header() {
               textDecoration: "none",
             }}
           >
-            LOGO
+            <img
+              className="logo-ifrs"
+              src="https://ifrs.edu.br/wp-content/uploads/2017/08/logo_vertical.png"
+              alt=""
+            />
           </Typography>
-          <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
-            {pages.map((page) => (
-              <Button
-                key={page}
-                onClick={handleCloseNavMenu}
-                sx={{ my: 2, color: "white", display: "block" }}
-              >
-                {page}
-              </Button>
-            ))}
-          </Box>
+          <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}></Box>
 
           <Box sx={{ flexGrow: 0 }}>
             {authHeader ? (
-              <button onClick={() => signOut()}>Sign Out</button>
+              <Button
+                variant="contained"
+                onClick={() => logout()}
+                color="success"
+              >
+                Logout
+              </Button>
             ) : (
               <Button
                 onClick={handleCloseUserMenu}

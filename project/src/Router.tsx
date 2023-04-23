@@ -63,14 +63,6 @@ function Router() {
         }
       />
       <Route
-        path={"/home"}
-        element={
-          <RequireAuth loginPath={"/login"}>
-            <Home />
-          </RequireAuth>
-        }
-      />
-      <Route
         path={"/card"}
         element={
           <RequireAuth loginPath={"/login"}>

@@ -24,7 +24,7 @@ function Copyright(props: any) {
 
   useEffect(() => {
     if (authHeader()) {
-      navigate("../home");
+      navigate("../");
     }
   }, []);
 
@@ -82,7 +82,7 @@ export default function SignIn() {
           type: "success",
           open: true,
         });
-        navigate("../home");
+        navigate("../");
       })
       .catch((error) => {
         setIsAlert({

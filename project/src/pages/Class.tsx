@@ -1,32 +1,51 @@
-// import { Container } from './styles';
+import { Card, CardContent, Link, Typography } from "@mui/material";
+import Header from "../components/Header";
+import { useNavigate } from "react-router-dom";
+import { useAuthUser } from "react-auth-kit";
+import { useEffect } from "react";
 
-import { Link } from "@mui/material";
+export default function Class() {
+  const auth = useAuthUser();
+  const navigate = useNavigate();
 
-const Classes = () => {
+  useEffect(() => {
+    if (auth()?.isAdmin !== "ADMIN") {
+      navigate("../card");
+    }
+  }, []);
   return (
-    <ul>
-      <li>
-        <Link underline="hover" color="inherit" href="/">
-          Home
-        </Link>
-      </li>
-      <li>
-        <Link underline="hover" color="inherit" href="/class/educationLevel">
-          Education Level
-        </Link>
-      </li>
-      <li>
-        <Link underline="hover" color="inherit" href="/class/course">
-          Course
-        </Link>
-      </li>
-      <li>
-        <Link underline="hover" color="inherit" href="/class/classRoom">
-          Class Room
-        </Link>
-      </li>
-    </ul>
-  );
-};
+    <div style={{ display: "flex", flexWrap: "wrap" }}>
+      <Header />
 
-export default Classes;
+      <Card sx={{ width: "100%", margin: "8px", borderRadius: "0px" }}>
+        <CardContent>
+          <Link underline="hover" color="inherit" href="/class/educationLevel">
+            <Typography variant="h6" component="div">
+              Education Level
+            </Typography>
+          </Link>
+        </CardContent>
+      </Card>
+
+      <Card sx={{ width: "100%", margin: "8px", borderRadius: "0px" }}>
+        <CardContent>
+          <Link underline="hover" color="inherit" href="/class/course">
+            <Typography variant="h6" component="div">
+              Course
+            </Typography>
+          </Link>
+        </CardContent>
+      </Card>
+
+      <Card sx={{ width: "100%", margin: "8px", borderRadius: "0px" }}>
+        <CardContent>
+          <Link underline="hover" color="inherit" href="/class/classRoom">
+            <Typography variant="h6" component="div">
+              Class Room
+            </Typography>
+          </Link>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}

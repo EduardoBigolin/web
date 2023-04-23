@@ -18,13 +18,14 @@ import {
   InputLabel,
   MenuItem,
   Select,
-  SelectChangeEvent,
   TextField,
   Typography,
 } from "@mui/material";
 import Link from "@mui/material/Link";
 import axios, { AxiosError } from "axios";
-import { useAuthHeader } from "react-auth-kit";
+import { useAuthHeader, useAuthUser } from "react-auth-kit";
+import Header from "../../components/Header";
+import { useNavigate } from "react-router-dom";
 
 interface Courses {
   id: string;
@@ -51,6 +52,15 @@ const initialFormData = {
 };
 
 export default function ClassRoom() {
+  const auth = useAuthUser();
+  const navigate = useNavigate();
+
+  React.useEffect(() => {
+    if (auth()?.isAdmin !== "ADMIN") {
+      navigate("../card");
+    }
+  }, []);
+
   const authHeader = useAuthHeader();
   const [rows, setRows] = React.useState<ClassRoomProps[]>([]);
   const [courses, setCourses] = React.useState<Courses[]>([]);
@@ -61,7 +71,7 @@ export default function ClassRoom() {
 
   function resetFormData() {
     setFormData(initialFormData);
-    setAlter(false)
+    setAlter(false);
   }
 
   async function handleSubmit() {
@@ -98,11 +108,14 @@ export default function ClassRoom() {
     handleClickOpen();
   }
 
-  async function handleAlter(id: string, data: {
-    name: string,
-    couserId: string,
-    lunch: [string]
-  }) {
+  async function handleAlter(
+    id: string,
+    data: {
+      name: string;
+      couserId: string;
+      lunch: [string];
+    }
+  ) {
     axios
       .put(`http://localhost:3000/api/v1/classRoom/alter/${id}`, data, {
         headers: {
@@ -188,139 +201,151 @@ export default function ClassRoom() {
   const weekDays = ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY"];
 
   return (
-    <div className="container">
-      <Breadcrumbs aria-label="breadcrumb">
-        <Link underline="hover" color="inherit" href="/">
-          Home
-        </Link>
-        <Link underline="hover" color="inherit" href="/class">
-          Class
-        </Link>
-        <Typography color="text.primary">ClassRoom</Typography>
-      </Breadcrumbs>
-      <TableContainer component={Paper}>
-        <Table sx={{ minWidth: 650 }} aria-label="simple table">
-          <TableHead>
-            <TableRow>
-              <TableCell align="left">Nome</TableCell>
-              <TableCell align="left">Curso</TableCell>
-              <TableCell align="left">Dias de Almoço</TableCell>
-              <TableCell align="right">Ações</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {rows.map((row) => (
-              <TableRow
-                key={row.name}
-                sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-              >
-                <TableCell component="th" scope="row">
-                  {row.name}
-                </TableCell>
-                <TableCell component="th" scope="row">
-                  {row.course}
-                </TableCell>
-                <TableCell component="th" scope="row">
-                  {row.lunch.map((e) => (<span> {e} </span>))}
-                </TableCell>
-                <TableCell
-                  align="right"
-                  sx={{ "&": { display: "flex", gap: 2 } }}
-                >
-                  <Button
-                    onClick={() => formUpdate(row)}
-                    variant="outlined"
-                    color="success"
-                  >
-                    Alter
-                  </Button>
-                  <Button
-                    onClick={() => handleDelete(row.id)}
-                    variant="outlined"
-                    color="error"
-                  >
-                    Delete
-                  </Button>
-                </TableCell>
+    <>
+      <Header />
+      <div className="container">
+        <Breadcrumbs aria-label="breadcrumb">
+          <Link underline="hover" color="inherit" href="/">
+            Home
+          </Link>
+          <Link underline="hover" color="inherit" href="/class">
+            Class
+          </Link>
+          <Typography color="text.primary">ClassRoom</Typography>
+        </Breadcrumbs>
+        <Button
+          variant="contained"
+          sx={{ "&": { marginY: 2 } }}
+          onClick={handleClickOpen}
+        >
+          Criar
+        </Button>
+        <TableContainer component={Paper}>
+          <Table sx={{ minWidth: 650 }} aria-label="simple table">
+            <TableHead>
+              <TableRow>
+                <TableCell align="left">Nome</TableCell>
+                <TableCell align="left">Curso</TableCell>
+                <TableCell align="left">Dias de Almoço</TableCell>
+                <TableCell align="right">Ações</TableCell>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-      <Button variant="outlined" onClick={handleClickOpen}>
-        Adicionar
-      </Button>
-      <Dialog open={open} onClose={handleClose}>
-        <DialogTitle>Subscribe</DialogTitle>
-        <DialogContent>
-          <TextField
-            autoFocus
-            margin="dense"
-            id="name"
-            label="Name"
-            type="text"
-            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-            value={formData.name}
-            fullWidth
-            variant="standard"
-          />
-          <FormControl fullWidth>
-            <InputLabel id="demo-simple-select-label">Course</InputLabel>
-            <Select
-              labelId="demo-simple-select-label"
-              id="demo-simple-select"
-              value={formData.courseId}
-              label="Course"
+            </TableHead>
+            <TableBody>
+              {rows.map((row) => (
+                <TableRow
+                  key={row.name}
+                  sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+                >
+                  <TableCell component="th" scope="row">
+                    {row.name}
+                  </TableCell>
+                  <TableCell component="th" scope="row">
+                    {row.course}
+                  </TableCell>
+                  <TableCell component="th" scope="row">
+                    {row.lunch.map((e) => (
+                      <span> {e} </span>
+                    ))}
+                  </TableCell>
+                  <TableCell
+                    align="right"
+                    sx={{ "&": { display: "flex", gap: 2 } }}
+                  >
+                    <Button
+                      onClick={() => formUpdate(row)}
+                      variant="outlined"
+                      color="success"
+                    >
+                      Alter
+                    </Button>
+                    <Button
+                      onClick={() => handleDelete(row.id)}
+                      variant="outlined"
+                      color="error"
+                    >
+                      Delete
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+
+        <Dialog open={open} onClose={handleClose}>
+          <DialogTitle>Criar Sala</DialogTitle>
+          <DialogContent>
+            <TextField
+              autoFocus
+              margin="dense"
+              id="name"
+              label="Name"
+              type="text"
               onChange={(e) =>
-                setFormData({ ...formData, courseId: e.target.value })
+                setFormData({ ...formData, name: e.target.value })
+              }
+              value={formData.name}
+              fullWidth
+              variant="standard"
+            />
+            <FormControl fullWidth sx={{ "&": { display: "flex", gap: 2 } }}>
+              <InputLabel id="demo-simple-select-label">Course</InputLabel>
+              <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                value={formData.courseId}
+                label="Course"
+                onChange={(e) =>
+                  setFormData({ ...formData, courseId: e.target.value })
+                }
+              >
+                {courses.map((course) => (
+                  <MenuItem value={course.id}>{course.name}</MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </DialogContent>
+
+          {weekDays.map((day: string) => (
+            <div>
+              <Checkbox
+                checked={formData.lunch.includes(day)}
+                onChange={(event) => {
+                  const checked = event.target.checked;
+                  setFormData((prev: ClassRoomProps) =>
+                    checked
+                      ? { ...prev, lunch: [...prev.lunch, day] }
+                      : {
+                          ...prev,
+                          lunch: prev.lunch.filter((p: string) => p !== day),
+                        }
+                  );
+                }}
+                inputProps={{ "aria-label": "controlled" }}
+              />
+              {day}
+            </div>
+          ))}
+
+          <DialogActions>
+            <Button onClick={handleClose}>Cancel</Button>
+            <Button
+              onClick={
+                alter
+                  ? () =>
+                      handleAlter(formData.id, {
+                        name: formData.name,
+                        couserId: formData.courseId,
+                        lunch: formData.lunch as [string],
+                      })
+                  : () => handleSubmit()
               }
             >
-              {courses.map((course) => (
-                <MenuItem value={course.id}>{course.name}</MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-        </DialogContent>
-
-        {weekDays.map((day: string) => (
-          <div>
-            <Checkbox
-              checked={formData.lunch.includes(day)}
-              onChange={(event) => {
-                const checked = event.target.checked;
-                setFormData((prev: ClassRoomProps) =>
-                  checked
-                    ? { ...prev, lunch: [...prev.lunch, day] }
-                    : {
-                        ...prev,
-                        lunch: prev.lunch.filter((p: string) => p !== day),
-                      }
-                );
-              }}
-              inputProps={{ "aria-label": "controlled" }}
-            />
-            {day}
-          </div>
-        ))}
-
-        <DialogActions>
-          <Button onClick={handleClose}>Cancel</Button>
-          <Button
-            onClick={
-              alter
-                ? () =>
-                    handleAlter(formData.id, {
-                      name: formData.name,
-                      couserId: formData.courseId,
-                      lunch: formData.lunch as [string],
-                    })
-                : () => handleSubmit()
-            }
-          >
-            {alter ? "Alterar" : "Adicionar"}
-          </Button>
-        </DialogActions>
-      </Dialog>
-    </div>
+              {alter ? "Alterar" : "Adicionar"}
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </div>
+    </>
   );
 }

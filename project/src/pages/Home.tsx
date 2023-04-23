@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Header from "../components/Header";
 import { Link } from "@mui/material";
 import { useNavigate } from "react-router-dom";
@@ -11,17 +11,26 @@ import {
   Grid,
   Typography,
 } from "@mui/material";
+import { useAuthUser } from "react-auth-kit";
 
 const Home: React.FC = () => {
   const navigate = useNavigate();
+  const auth = useAuthUser();
+
+  useEffect(() => {
+    if (auth()?.isAdmin !== "ADMIN") {
+      navigate("../card");
+    }
+  }, []);
+
   return (
     <>
       <Header />
-      <Typography variant="h4" sx={{ mb: 2 }}>
-        Welcome Home
+      <Typography variant="h4" sx={{ m: 2, textAlign: "center" }}>
+        Welcome ADMIN
       </Typography>
-      <Grid container spacing={2}>
-        <Grid item xs={12} sm={6} md={4}>
+      <Grid container justifyContent="center" spacing={5}>
+        <Grid item xs={20} sm={6} md={4}>
           <Card>
             <CardActionArea
               component={Link}
@@ -53,24 +62,6 @@ const Home: React.FC = () => {
               />
               <CardContent>
                 <Typography variant="h6">CRUD Users</Typography>
-              </CardContent>
-            </CardActionArea>
-          </Card>
-        </Grid>
-        <Grid item xs={12} sm={6} md={4}>
-          <Card>
-            <CardActionArea
-              component={Link}
-              to="../card"
-              onClick={() => navigate("../card")}
-              sx={{ textDecoration: "none", display: "flex" }}
-            >
-              <CardMedia
-                component={CreditCard}
-                sx={{ fontSize: 96, color: "primary.main", m: 2 }}
-              />
-              <CardContent>
-                <Typography variant="h6">Card</Typography>
               </CardContent>
             </CardActionArea>
           </Card>

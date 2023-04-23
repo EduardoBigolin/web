@@ -1,14 +1,15 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { useAuthHeader, useAuthUser } from "react-auth-kit";
+import { useAuthHeader, useAuthUser, useSignOut } from "react-auth-kit";
 import { QRCodeSVG } from "qrcode.react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import IFLogo from "../../assets/IFLogo.svg";
 import IFRSLogo from "../../assets/IFRSLogo.png";
-import moment from 'moment'
+import moment from "moment";
 import "./card.css";
+import Header from "../../components/Header";
 
-const day = moment().format('dddd').toUpperCase();
+const day = moment().format("dddd").toUpperCase();
 interface UserData {
   name: string;
   group: string;
@@ -20,6 +21,7 @@ interface UserData {
 }
 
 const initialUserData = {
+  id: "",
   name: "",
   group: "",
   dateOfBirth: "",
@@ -35,6 +37,14 @@ const Card: React.FC = () => {
   const [userData, setUserData] = useState<UserData>(initialUserData);
   const [loading, setLoading] = useState(true);
   const { slug } = useParams<{ slug: string }>();
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (auth()?.isAdmin !== "USER") {
+      navigate("../");
+    }
+  }, []);
 
   useEffect(() => {
     axios
@@ -64,54 +74,58 @@ const Card: React.FC = () => {
           <p>Carregando...</p>
         </div>
       ) : (
-        <div className="card-body">
-          <div className="logo-container">
-            <img src={IFRSLogo} alt={"logo do ifrs"} className={"logo"} />
-          </div>
-          <div className={"card-content"}>
-            <h1>
-              {userData.group} de {userData.course}
-            </h1>
-            <div className={"user-content"}>
-              <img
-                src={"data:image/jpeg;base64, " + userData.photo}
-                className={"avatar"}
-              />
-              <span className={"student-name"}>{userData.name}</span>
-              <span className={"birth-date"}>{userData.dateOfBirth}</span>
+        <>
+          {slug == undefined ? <Header /> : ""}
+          <div className="card-body">
+            <div className="logo-container">
+              <img src={IFRSLogo} alt={"logo do ifrs"} className={"logo"} />
             </div>
-            <div
-              className={
-                userData.lunch.includes(day) ? "authorized" : "not-authorized"
-              }
-            >
-              {userData.lunch.includes(day) ? (
-                <span>Almoço Liberado</span>
+            <div className={"card-content"}>
+              <h1>
+                {userData.group} de {userData.course}
+              </h1>
+              <div className={"user-content"}>
+                <img
+                  src={"data:image/jpeg;base64, " + userData.photo}
+                  className={"avatar"}
+                />
+                <span className={"student-name"}>{userData.name}</span>
+                <span className={"birth-date"}>{userData.dateOfBirth}</span>
+              </div>
+              <div
+                className={
+                  userData.lunch.includes(day) ? "authorized" : "not-authorized"
+                }
+              >
+                {userData.lunch.includes(day) ? (
+                  <span>Almoço Liberado</span>
+                ) : (
+                  <span>Almoço Não Liberado</span>
+                )}
+              </div>
+            </div>
+            <div className={"vertical-line"}></div>
+            <div className={"qrCode-container"}>
+              {slug != undefined ? (
+                ""
               ) : (
-                <span>Almoço Não Liberado</span>
+                <QRCodeSVG
+                  onClick={() => console.log(userData.link)}
+                  className={"qrCode"}
+                  value={userData.link}
+                  imageSettings={{
+                    src: IFLogo,
+                    x: undefined,
+                    y: undefined,
+                    height: 35,
+                    width: 25,
+                    excavate: true,
+                  }}
+                />
               )}
             </div>
           </div>
-          <div className={"vertical-line"}></div>
-          <div className={"qrCode-container"}>
-            {slug != undefined ? (
-              ""
-            ) : (
-              <QRCodeSVG
-                className={"qrCode"}
-                value={userData.link}
-                imageSettings={{
-                  src: IFLogo,
-                  x: undefined,
-                  y: undefined,
-                  height: 35,
-                  width: 25,
-                  excavate: true,
-                }}
-              />
-            )}
-          </div>
-        </div>
+        </>
       )}
     </>
   );
