@@ -86,6 +86,7 @@ const Card: React.FC = () => {
               </h1>
               <div className={"user-content"}>
                 <img
+                    alt={`avatar de ${userData.name}`}
                   src={"data:image/jpeg;base64, " + userData.photo}
                   className={"avatar"}
                 />

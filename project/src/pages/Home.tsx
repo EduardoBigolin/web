@@ -25,8 +25,6 @@ const Home: React.FC = () => {
                 <Grid item xs={20} sm={6} md={4}>
                     <Card>
                         <CardActionArea
-                            component={Link}
-                            to="../class"
                             onClick={() => navigate("../class")}
                             sx={{textDecoration: "none", display: "flex"}}
                         >
@@ -43,8 +41,6 @@ const Home: React.FC = () => {
                 <Grid item xs={12} sm={6} md={4}>
                     <Card>
                         <CardActionArea
-                            component={Link}
-                            to="../user"
                             onClick={() => navigate("../user")}
                             sx={{textDecoration: "none", display: "flex"}}
                         >
