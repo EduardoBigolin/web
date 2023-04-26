@@ -1,6 +1,6 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { useAuthHeader, useAuthUser, useSignOut } from "react-auth-kit";
+import { useAuthHeader, useAuthUser } from "react-auth-kit";
 import { QRCodeSVG } from "qrcode.react";
 import { useNavigate, useParams } from "react-router-dom";
 import IFLogo from "../../assets/IFLogo.svg";

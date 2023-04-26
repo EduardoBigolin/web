@@ -6,6 +6,7 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
+import moment from "moment"
 import {
   Breadcrumbs,
   Button,
@@ -36,7 +37,7 @@ interface User {
   email: string;
   dateOfBirth: string;
   isAdmin: boolean;
-  photoFile: string;
+  photoFile: File | undefined;
   classId: string;
   class: {
     name: string;
@@ -52,7 +53,7 @@ const initialFormData = {
   email: "",
   dateOfBirth: "",
   isAdmin: false,
-  photoFile: "",
+  photoFile: undefined,
   classId: "",
   class: {
     name: "",
@@ -70,7 +71,7 @@ export default function ClassRoom() {
   const [isAlter, setIsAlter] = React.useState(false);
   const [alter, setAlter] = React.useState(false);
   const [pass, setPass] = React.useState<string>("");
-  const [file, setFile] = React.useState<File | null | undefined>();
+  const [file, setFile] = React.useState<File | undefined>(undefined);
 
   function resetFormData() {
     setFormData(initialFormData);
@@ -98,7 +99,7 @@ export default function ClassRoom() {
         }
       )
       .then(
-        (response) => {
+        () => {
           alert("Usuário criado com sucesso!");
           setIsAlter(true);
         },
@@ -140,7 +141,8 @@ export default function ClassRoom() {
           console.log(response);
         },
         (error: AxiosError) => {
-          alert(error.response?.data.message as any);
+          const err: string = (error.response?.data.message as string);
+          alert(err);
         }
       );
     setIsAlter(true);
@@ -252,7 +254,7 @@ export default function ClassRoom() {
                     {row.email}
                   </TableCell>
                   <TableCell component="th" scope="row">
-                    {row.dateOfBirth}
+                    {moment(row.dateOfBirth).format("DD/MM/YYYY")}
                   </TableCell>
                   <TableCell component="th" scope="row">
                     {row.class.name} de {row.class.Couser.name}
@@ -361,7 +363,7 @@ export default function ClassRoom() {
                     accept="image/*"
                     multiple
                     type="file"
-                    onChange={(e) => setFile(e.target.files[0])}
+                    onChange={(e) => e.target.files ? setFile(e.target.files[0]) : undefined}
                   />
                 </Button>
               )}

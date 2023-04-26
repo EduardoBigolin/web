@@ -51,6 +51,28 @@ const initialFormData = {
   lunch: [],
 };
 
+
+enum WEEKDAYS {
+  MONDAY = "MONDAY",
+  TUESDAY = "TUESDAY",
+  WEDNESDAY = "WEDNESDAY",
+  THURSDAY = "THURSDAY",
+  FRIDAY = "FRIDAY",
+
+}
+
+const getFormattedWeekday = (w: string, plural = false) => {
+  switch (w){
+    case WEEKDAYS.MONDAY: return `Segunda${plural?'s':''}-feira${plural?'s':''}`
+    case WEEKDAYS.TUESDAY: return `Terça${plural?'s':''}-feira${plural?'s':''}`
+    case WEEKDAYS.WEDNESDAY: return `Quarta${plural?'s':''}-feira${plural?'s':''}`
+    case WEEKDAYS.THURSDAY: return `Quinta${plural?'s':''}-feira${plural?'s':''}`
+    case WEEKDAYS.FRIDAY: return `Sexta${plural?'s':''}-feira${plural?'s':''}`
+    default: return "ERROR"
+
+  }
+}
+
 export default function ClassRoom() {
   const auth = useAuthUser();
   const navigate = useNavigate();
@@ -244,7 +266,7 @@ export default function ClassRoom() {
                   </TableCell>
                   <TableCell component="th" scope="row">
                     {row.lunch.map((e) => (
-                      <span> {e} </span>
+                      <span> {getFormattedWeekday(e)} </span>
                     ))}
                   </TableCell>
                   <TableCell
