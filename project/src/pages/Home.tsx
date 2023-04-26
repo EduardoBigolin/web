@@ -1,6 +1,6 @@
 import React, {useEffect} from "react";
 import Header from "../components/Header";
-import {Card, CardActionArea, CardContent, CardMedia, Grid, Link, Typography} from "@mui/material";
+import {Card, CardActionArea, CardContent, CardMedia, Grid, Typography} from "@mui/material";
 import {useNavigate} from "react-router-dom";
 import {Group, Note} from "@mui/icons-material";
 import {useAuthUser} from "react-auth-kit";

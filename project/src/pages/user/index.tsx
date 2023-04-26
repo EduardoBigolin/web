@@ -140,9 +140,8 @@ export default function ClassRoom() {
         (response) => {
           console.log(response);
         },
-        (error: AxiosError) => {
-          const err: string = (error.response?.data.message as string);
-          alert(err);
+        () => {
+          alert("erro");
         }
       );
     setIsAlter(true);

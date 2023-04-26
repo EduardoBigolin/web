@@ -9,14 +9,12 @@ import MenuIcon from "@mui/icons-material/Menu";
 import Container from "@mui/material/Container";
 import Button from "@mui/material/Button";
 import MenuItem from "@mui/material/MenuItem";
-import AdbIcon from "@mui/icons-material/Adb";
 import { useAuthHeader, useSignOut } from "react-auth-kit";
 
 const settings = ["Profile", "Account", "Dashboard", "Logout"];
 
 function Header() {
   const authHeader = useAuthHeader();
-  const signOut = useSignOut();
 
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
     null
@@ -117,7 +115,7 @@ function Header() {
           <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}></Box>
 
           <Box sx={{ flexGrow: 0 }}>
-            {authHeader ? (
+            {
               <Button
                 variant="contained"
                 onClick={() => logout()}
@@ -125,14 +123,7 @@ function Header() {
               >
                 Logout
               </Button>
-            ) : (
-              <Button
-                onClick={handleCloseUserMenu}
-                sx={{ my: 2, color: "white", display: "block" }}
-              >
-                Login
-              </Button>
-            )}
+            }
             <Menu
               sx={{ mt: "45px" }}
               id="menu-appbar"
