@@ -9,12 +9,11 @@ import MenuIcon from "@mui/icons-material/Menu";
 import Container from "@mui/material/Container";
 import Button from "@mui/material/Button";
 import MenuItem from "@mui/material/MenuItem";
-import { useAuthHeader, useSignOut } from "react-auth-kit";
+import { useSignOut } from "react-auth-kit";
 
 const settings = ["Profile", "Account", "Dashboard", "Logout"];
 
 function Header() {
-  const authHeader = useAuthHeader();
 
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
     null
